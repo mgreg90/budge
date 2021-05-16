@@ -1,0 +1,4 @@
+api/.env
+api/.gradle/*
+api/build/*
+api/.idea
