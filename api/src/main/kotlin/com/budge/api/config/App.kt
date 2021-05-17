@@ -36,7 +36,7 @@ class App {
 
     private fun connectToDb() {
         logger.info("Creating Database Connection... ")
-        // Connect to DB Code
+        PostgresFacade.connect()
         logger.info("Creating Database Connection Complete!")
     }
 

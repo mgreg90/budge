@@ -20,6 +20,8 @@ class EnvVarReader {
 
     fun readStr(varName : String) = read(varName) ?: ""
 
+    fun readNullableStr(varName : String) : String? = env.get(varName)
+
     fun validate() {
         if (missingEnvVars.any() || invalidEnvVars.any())
             throw Exceptions.EnvVarException(missingEnvVars = missingEnvVars, invalidEnvVars = invalidEnvVars)
