@@ -1,8 +1,8 @@
 package com.budge.api.persistence
 
+import com.budge.api.persistence.models.MigrationModel
 import com.budge.api.persistence.repositories.MigrationRepository
 import com.budge.api.persistence.tables.MigrationTable
-import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.reflections.Reflections
@@ -13,54 +13,56 @@ object MigrationRunner {
     const val TIMESTAMP = "timestamp"
 
     fun run() {
-        // Get current time
-        val now = currentTimestamp()
-        // Get all migration classes
-        val migrationClasses = migrationClasses()
-        // Get all migrations from database in order
-        val previouslyRunMigrations = findOrCreateMigrationTable()
-        // create list of migrations that (a) have not been run and (b) are timestamped >= now
-        // TODO
-//        val unexecutedMigrations = migrationClasses.filter {
-////            if (previouslyRunMigrations.any { previousMigration -> previousMigration}) return@filter false
-//
-////            val timestampField = it.declaredFields.find { it.name == TIMESTAMP }
-////            return timestampField
-////            val timestampField = it.declaredFields.find {
-////                return it.name == TIMESTAMP
-////            }
-////            return@filter true
-//        }
-        // Log all unrun migrations
-        // For each unrun migration
-            // attempt to run `up`
-            // if it fails, run `down` and fail
-            // if that fails, fail
+        val unexecutedMigrations = migrationClasses().filter {
+            val model = previouslyRunMigrations().find { migration -> migration.timestamp == it.timestamp }
+            return@filter (it.isInThePast() && model == null)
+        }
+
+        logger.info("The following migrations have not been run: ${unexecutedMigrations.map { "${it.javaClass}, " }}")
+
+        unexecutedMigrations.forEach {
+            try {
+                transaction {
+                    it.up()
+                    MigrationRepository.add(it.toMigrationModel())
+                }
+            } catch (e : Exception) {
+                logger.error("Migration ${it.javaClass} failed! Rolling back...")
+                logError(e)
+                try {
+                    transaction { it.down() }
+                    logger.info("Rollback successful!")
+                    throw e
+                } catch (e : Exception) {
+                    logger.error("Rollback for ${it.javaClass} failed! Manual inspection needed!")
+                    logError(e)
+                    throw e
+                }
+            }
+        }
     }
 
     fun resetTo(version: Long) {
+        // TODO
         // get all migrations from database in order greater than `version`
         // For each migration
             // run `down`
             // if it fails, fail
     }
 
-    private fun currentTimestamp() = System.currentTimeMillis() / 1000
-
     private fun migrationClasses() =
-        Reflections("com.budge").getSubTypesOf(IMigration::class.java)
-
-    private fun findOrCreateMigrationTable() : List<ResultRow> {
-        var results : List<ResultRow>
-        try {
-            results = MigrationRepository.index()
-            print(results)
-        } catch (ex : Exception) {
-            logger.info("Migrations Table Does Not Exist! Creating...")
-            transaction { SchemaUtils.create(MigrationTable) }
-            results = MigrationRepository.index()
-            logger.info("Migrations Table Created!")
+        Reflections("com.budge").getSubTypesOf(IMigration::class.java).map {
+            it.constructors[0].newInstance() as IMigration
         }
-        return results
+
+    private fun previouslyRunMigrations() : List<MigrationModel> {
+        transaction { SchemaUtils.create(MigrationTable) }
+        return MigrationRepository.index()
+    }
+
+    private fun logError(e : Exception) {
+        logger.error("${ e.javaClass }")
+        logger.error(e.message)
+        logger.error(e.stackTrace.joinToString("\n"))
     }
 }
