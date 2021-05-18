@@ -16,6 +16,7 @@ class App {
     fun start() {
         readEnvVars()
         connectToDb()
+        runMigrations()
 
         val clients = Clients.init()
         val repositories = Repositories.init().registerIndexes()
@@ -38,6 +39,12 @@ class App {
         logger.info("Creating Database Connection... ")
         PostgresFacade.connect()
         logger.info("Creating Database Connection Complete!")
+    }
+
+    private fun runMigrations() {
+        logger.info("Running Database Migrations... ")
+        PostgresFacade.runMigrations()
+        logger.info("Running Database Migrations Complete!")
     }
 
     private fun registerRoutes() {

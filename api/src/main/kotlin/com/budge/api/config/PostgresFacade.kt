@@ -1,22 +1,20 @@
 package com.budge.api.config
 
 import com.budge.api.EnvVars
+import com.budge.api.persistence.MigrationRunner
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.Database
 
 object PostgresFacade {
-    const val DRIVER = "org.postgres.Driver"
+    const val DRIVER = "org.postgresql.Driver"
 
-    fun connect() {
-//        Class.forName(DRIVER)
-//        val connString = connectionString()
-//        Database.connect(connectionString(), driver = DRIVER)
-        Database.connect(hikariConfig())
-    }
+    fun connect() { Database.connect(hikariConfig()) }
+
+    fun runMigrations() { MigrationRunner.run() }
 
     private fun hikariConfig() = HikariConfig().apply {
-        driverClassName = "org.postgresql.Driver"
+        driverClassName = DRIVER
         jdbcUrl = connectionString()
         if (!EnvVars.postgresUser().isNullOrBlank()) username = EnvVars.postgresUser()
         if (!EnvVars.postgresPassword().isNullOrBlank()) password = EnvVars.postgresPassword()
