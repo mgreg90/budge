@@ -42,9 +42,7 @@
             >Signup</el-button
           >
         </el-form-item>
-        <div>
-          Already have an account? <a href="/login">Login</a>
-        </div>
+        <div>Already have an account? <a href="/login">Login</a></div>
       </el-form>
     </el-card>
   </div>
@@ -54,9 +52,10 @@
 export default {
   name: "signup",
   data() {
-      const validatePasswordConfirmation = (rule, value, callback) => {
-          if (value != this.model.password) callback(new Error("Does not match with password"))
-      }
+    const validatePasswordConfirmation = (rule, value, callback) => {
+      if (value != this.model.password)
+        callback(new Error("Does not match with password"));
+    };
     return {
       validCredentials: {
         username: "lightscope",
@@ -65,7 +64,7 @@ export default {
       model: {
         username: "",
         password: "",
-        passwordConfirmation: ""
+        passwordConfirmation: "",
       },
       loading: false,
       rules: {
@@ -90,11 +89,15 @@ export default {
           },
         ],
         passwordConfirmation: [
-          { required: true, message: "Password Confirmation is required", trigger: "blur" },
           {
-              validator: validatePasswordConfirmation,
-              trigger: 'change'
-          }
+            required: true,
+            message: "Password Confirmation is required",
+            trigger: "blur",
+          },
+          {
+            validator: validatePasswordConfirmation,
+            trigger: "change",
+          },
         ],
       },
     };

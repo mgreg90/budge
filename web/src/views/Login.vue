@@ -35,11 +35,12 @@
           >
         </el-form-item>
         <div>
-          <a class="forgot-password" href="https://oxfordinformatics.com/"
-            >Forgot password ?</a>
+          <router-link class="forgot-password" to="#"
+            >Forgot password?</router-link
+          >
         </div>
         <div>
-          New here? <a href="/signup">Create an Account</a>
+          New here? <router-link to="/signup">Create an Account</router-link>
         </div>
       </el-form>
     </el-card>
