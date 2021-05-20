@@ -1,13 +1,13 @@
 <template>
-  <div class="login">
+  <div class="signup">
     <el-card>
-      <h2>Login</h2>
+      <h2>Signup</h2>
       <el-form
-        class="login-form"
+        class="signup-form"
         :model="model"
         :rules="rules"
         ref="form"
-        @submit.prevent="login"
+        @submit.prevent="signup"
       >
         <el-form-item prop="username">
           <el-input
@@ -24,22 +24,26 @@
             prefix-icon="fas fa-lock"
           ></el-input>
         </el-form-item>
+        <el-form-item prop="passwordConfirmation">
+          <el-input
+            v-model="model.passwordConfirmation"
+            placeholder="Password Confirmation"
+            type="password"
+            prefix-icon="fas fa-lock"
+          ></el-input>
+        </el-form-item>
         <el-form-item>
           <el-button
             :loading="loading"
-            class="login-button"
+            class="signup-button"
             type="primary"
             native-type="submit"
             block
-            >Login</el-button
+            >Signup</el-button
           >
         </el-form-item>
         <div>
-          <a class="forgot-password" href="https://oxfordinformatics.com/"
-            >Forgot password ?</a>
-        </div>
-        <div>
-          New here? <a href="/signup">Create an Account</a>
+          Already have an account? <a href="/login">Login</a>
         </div>
       </el-form>
     </el-card>
@@ -48,8 +52,11 @@
 
 <script>
 export default {
-  name: "login",
+  name: "signup",
   data() {
+      const validatePasswordConfirmation = (rule, value, callback) => {
+          if (value != this.model.password) callback(new Error("Does not match with password"))
+      }
     return {
       validCredentials: {
         username: "lightscope",
@@ -58,6 +65,7 @@ export default {
       model: {
         username: "",
         password: "",
+        passwordConfirmation: ""
       },
       loading: false,
       rules: {
@@ -81,28 +89,35 @@ export default {
             trigger: "blur",
           },
         ],
+        passwordConfirmation: [
+          { required: true, message: "Password Confirmation is required", trigger: "blur" },
+          {
+              validator: validatePasswordConfirmation,
+              trigger: 'change'
+          }
+        ],
       },
     };
   },
   methods: {
-    simulateLogin() {
+    simulatesignup() {
       return new Promise((resolve) => {
         setTimeout(resolve, 800);
       });
     },
-    async login() {
+    async signup() {
       let valid = await this.$refs.form.validate();
       if (!valid) {
         return;
       }
       this.loading = true;
-      await this.simulateLogin();
+      await this.simulatesignup();
       this.loading = false;
       if (
         this.model.username === this.validCredentials.username &&
         this.model.password === this.validCredentials.password
       ) {
-        this.$message.success("Login successfull");
+        this.$message.success("signup successfull");
       } else {
         this.$message.error("Username or password is invalid");
       }
@@ -113,18 +128,18 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.login {
+.signup {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.login-button {
+.signup-button {
   width: 100%;
   margin-top: 40px;
 }
-.login-form {
+.signup-form {
   width: 290px;
 }
 .forgot-password {
@@ -144,10 +159,10 @@ $teal: rgb(0, 124, 137);
     border-color: lighten($teal, 7);
   }
 }
-.login .el-input__inner:hover {
+.signup .el-input__inner:hover {
   border-color: $teal;
 }
-.login .el-input__prefix {
+.signup .el-input__prefix {
   background: rgb(238, 237, 234);
   left: 0;
   height: calc(100% - 2px);
@@ -158,10 +173,10 @@ $teal: rgb(0, 124, 137);
     width: 30px;
   }
 }
-.login .el-input input {
+.signup .el-input input {
   padding-left: 35px;
 }
-.login .el-card {
+.signup .el-card {
   padding-top: 0;
   padding-bottom: 30px;
 }
@@ -180,7 +195,7 @@ a {
     color: lighten($teal, 7);
   }
 }
-.login .el-card {
+.signup .el-card {
   width: 340px;
   display: flex;
   justify-content: center;
