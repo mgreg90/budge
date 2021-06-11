@@ -17,15 +17,15 @@ export default defineComponent({
     HelloWorld,
   },
   setup() {
-    const store = useStore()
+    const store = useStore();
     const wow = () => {
-      console.log(store)
-      return 'Wow!'
-    }
+      console.log(store);
+      return "Wow!";
+    };
 
     return {
-      wow
-    }
-  }
+      wow,
+    };
+  },
 });
 </script>
