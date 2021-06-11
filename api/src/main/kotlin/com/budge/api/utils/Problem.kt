@@ -66,7 +66,7 @@ object Problems {
     )
 
 
-    fun DATABASE_ACTION_FAILED_ERROR(message : String) = Problem(
+    fun DATABASE_TRANSACTION_FAILED_ERROR(message : String = "Database transaction failed!") = Problem(
             type = ProblemType.INTERNAL_SERVER_ERROR,
             message = message,
             statusCode = 500
@@ -128,7 +128,7 @@ object Problems {
             "Service is temporarily unavailable"
         );
 
-        val typeString = "workout-data-aggregator.errors.$_typeString"
+        val typeString = "budge.errors.$_typeString"
 
         override fun toString() = typeString
 

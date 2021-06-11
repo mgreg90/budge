@@ -1,15 +1,15 @@
 package com.budge.api.persistence
 
+import com.budge.api.persistence.repositories.UserRepository
+
 object Repositories {
     var all = listOf<IRepository>()
 
-//    lateinit var exampleRepository: ExampleRepository
+    var userRepository = UserRepository
 
     fun init(): Repositories {
-//        exampleRepository = ExampleRepository()
-
         all = listOf(
-//                exampleRepository
+            userRepository
         )
 
         return this
