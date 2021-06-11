@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="login">
     {{ message }}
   </div>
 </template>
@@ -8,11 +8,10 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Home",
+  name: "Login",
   components: {},
   setup() {
-    const message = "Home Page - Protected"
-
+    const message = "Login Page"
     return {
       message
     }

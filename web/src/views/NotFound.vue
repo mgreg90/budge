@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="notfound">
     {{ message }}
   </div>
 </template>
@@ -8,11 +8,10 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Home",
+  name: "NotFound",
   components: {},
   setup() {
-    const message = "Home Page - Protected"
-
+    const message = "404 - Not Found"
     return {
       message
     }
