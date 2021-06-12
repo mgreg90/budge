@@ -11,11 +11,11 @@ export default defineComponent({
   name: "Home",
   components: {},
   setup() {
-    const message = "Home Page - Protected"
+    const message = "Home Page - Protected";
 
     return {
-      message
-    }
+      message,
+    };
   },
 });
 </script>

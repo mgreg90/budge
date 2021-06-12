@@ -1,35 +1,43 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Home from "../views/Home.vue";
 import applyMiddleware from "./middleware";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    redirect: "/home"
+    redirect: "/home",
   },
   {
     path: "/home",
     name: "Home",
     component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue"),
+  },
+  {
+    path: "/register",
+    name: "Sign Up",
+    component: () =>
+      import(/* webpackChunkName: "signup" */ "../views/SignUp.vue"),
     meta: {
-      requiresAuth: true,
+      public: true,
     },
   },
   {
-    path: "/signup",
-    name: "SignUp",
-    component: () => import(/* webpackChunkName: "signup" */ "../views/SignUp.vue"),
-  },
-  {
     path: "/login",
-    name: "LogIn",
-    component: () => import(/* webpackChunkName: "login" */ "../views/Login.vue"),
+    name: "Sign In",
+    component: () =>
+      import(/* webpackChunkName: "login" */ "../views/Login.vue"),
+    meta: {
+      public: true,
+    },
   },
   {
     path: "/:path(.*)*",
     name: "Not Found",
-    component: () => import(/* webpackChunkName: "notfound" */ "../views/NotFound.vue")
-  }
+    component: () =>
+      import(/* webpackChunkName: "notfound" */ "../views/NotFound.vue"),
+    meta: {
+      public: true,
+    },
+  },
 ];
 
 const router = createRouter({
@@ -37,6 +45,6 @@ const router = createRouter({
   routes,
 });
 
-applyMiddleware(router)
+applyMiddleware(router);
 
 export default router;

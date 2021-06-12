@@ -11,10 +11,10 @@ export default defineComponent({
   name: "NotFound",
   components: {},
   setup() {
-    const message = "404 - Not Found"
+    const message = "404 - Not Found";
     return {
-      message
-    }
+      message,
+    };
   },
 });
 </script>
