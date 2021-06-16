@@ -3,6 +3,8 @@ import {
   IApiErrorResponseResults,
 } from "@/types/apiResponses.types";
 
+const AUTH_ERROR_TYPE = "budge.errors.authentication-failed";
+
 export class ApiErrorResponse {
   private response?: IApiErrorResponse;
 
@@ -11,6 +13,9 @@ export class ApiErrorResponse {
   }
 
   messages(): string[] {
+    if (this.response?.type === AUTH_ERROR_TYPE)
+      return ["Authentication Failed!"];
+
     const messages = this.response?.results?.map(
       (result: IApiErrorResponseResults) => result.message
     );

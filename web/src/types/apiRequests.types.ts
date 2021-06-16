@@ -3,3 +3,13 @@ export interface IUserCreateRequestDto {
   password: string;
   passwordConfirmation: string;
 }
+
+export interface ISessionCreateRequestDto {
+  email: string;
+  password: string;
+}
+
+export interface IRequestOptions {
+  body?: any;
+  skipAuth?: boolean;
+}

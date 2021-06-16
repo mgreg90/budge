@@ -10,6 +10,21 @@ export interface IApiErrorResponseResults {
 }
 
 export interface IUserCreateResponseDto {
-  id: string;
   token: string;
+  user: {
+    id: string;
+    email: string;
+  };
+}
+
+export interface ISessionCreateResponseDto {
+  token: string;
+  user: {
+    id: string;
+    email: string;
+  };
+}
+
+export interface ISessionReadResponseDto {
+  isTokenValid: boolean;
 }

@@ -14,7 +14,7 @@ class UserValidator(private val model: UserModel, private val repository: UserRe
         }
 
         if (!isEmailUnique) return Either.Problem(Problems.VALIDATION_ERROR(listOf(
-            ValidationResult("email", "must be unique")
+            ValidationResult("email", "A user with that email already exists!")
         )))
 
         return Either.Value(model)

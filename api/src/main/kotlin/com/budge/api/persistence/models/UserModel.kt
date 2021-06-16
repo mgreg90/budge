@@ -32,4 +32,6 @@ class UserModel(
         passwordHash = BCrypt.hashpw(this.password!!, BCrypt.gensalt())
         return passwordHash!!
     }
+
+    fun verifyPassword(attemptedPw: String) = BCrypt.checkpw(attemptedPw, passwordHash())
 }

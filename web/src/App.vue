@@ -1,5 +1,5 @@
 <template>
-  <authenticated-layout v-if="isLoggedIn()">
+  <authenticated-layout v-if="session">
     <router-view />
   </authenticated-layout>
   <unauthenticated-layout v-else>
@@ -8,8 +8,13 @@
 </template>
 
 <script lang="ts">
+import { computed } from "@vue/runtime-core";
 import AuthenticatedLayout from "./layouts/AuthenticatedLayout.vue";
 import UnauthenticatedLayout from "./layouts/UnauthenticatedLayout.vue";
+import Session from "./models/Session";
+import { useStore } from "./store";
+import { ActionTypes } from "./store/modules/auth/actions";
+
 export default {
   name: "App",
   components: {
@@ -17,9 +22,14 @@ export default {
     UnauthenticatedLayout,
   },
   setup() {
-    const isLoggedIn = () => false; // TODO
+    const store = useStore();
+
+    store.dispatch(ActionTypes.SET_SESSION);
+
+    const session = computed<Session | undefined>(() => store.getters.session);
+
     return {
-      isLoggedIn,
+      session, // should this be an action? Simplify just to currentUser?
     };
   },
 };

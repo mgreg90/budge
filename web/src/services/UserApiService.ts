@@ -1,6 +1,6 @@
 import { ApiErrorResponse } from "@/models/ApiErrorResponse";
 import { Either } from "@/models/Either";
-import User from "@/models/User";
+import Session from "@/models/Session";
 import { IUserCreateRequestDto } from "@/types/apiRequests.types";
 import { IUserCreateResponseDto } from "@/types/apiResponses.types";
 import BaseApiService from "./BaseApiService";
@@ -15,31 +15,24 @@ class UserApiService {
 
   async create(
     body: IUserCreateRequestDto
-  ): Promise<Either<User | null, ApiErrorResponse | null>> {
-    const response = await this.baseApiService.post(body);
+  ): Promise<Either<Session | null, ApiErrorResponse | null>> {
+    const response = await this.baseApiService.post({ body, skipAuth: true });
 
     if (response.isFailure()) {
-      console.error(response.exception);
-      return new Either(null, response.exception);
+      console.error("API Request Failed!", response.exception);
+      return Promise.resolve(new Either(null, response.exception));
     }
 
     let responseJson: IUserCreateResponseDto;
     try {
       responseJson = await response.value!.json<IUserCreateResponseDto>();
     } catch (exception) {
-      console.error("Error parsing json!", exception);
+      console.error("Failed to parse json!", exception);
       return Promise.resolve(new Either(null, new ApiErrorResponse()));
     }
 
-    const user = User.fromJson(responseJson);
-
-    return new Either(user, null);
+    return Promise.resolve(new Either(Session.fromResponseDto(responseJson)));
   }
 }
 
 export default UserApiService;
-
-export interface IUserResponse {
-  id: string;
-  token: string;
-}
