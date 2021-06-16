@@ -16,7 +16,7 @@ object MigrationRunner {
         val unexecutedMigrations = migrationClasses().filter {
             val model = previouslyRunMigrations().find { migration -> migration.timestamp == it.timestamp }
             return@filter (it.isInThePast() && model == null)
-        }
+        }.sortedBy { it.timestamp }
 
         logger.info("The following migrations have not been run: ${unexecutedMigrations.map { "${it.javaClass}, " }}")
 

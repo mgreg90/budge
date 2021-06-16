@@ -2,6 +2,8 @@ package com.budge.api.rest.controllers
 
 import com.budge.api.utils.Exceptions
 import com.budge.api.rest.controllers.v1.healthCheck.HealthCheckController
+import com.budge.api.rest.controllers.v1.sessions.SessionsController
+import com.budge.api.rest.controllers.v1.users.UsersController
 import com.budge.api.services.Services
 import io.javalin.Javalin
 
@@ -12,10 +14,14 @@ class Controllers(private val services : Services) {
     fun init() : Controllers {
         // Initialize controllers, pass in needed services
         val healthCheckController = HealthCheckController()
+        val sessionsController = SessionsController(services.authService)
+        val usersController = UsersController(services.userService, services.authService)
 
         // List all controllers in alphabetical order
         all = listOf(
-            healthCheckController
+            healthCheckController,
+            sessionsController,
+            usersController
         )
 
         isInitialized = true

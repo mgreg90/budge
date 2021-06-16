@@ -1,189 +1,158 @@
 <template>
-  <div class="login">
-    <el-card>
-      <h2>Login</h2>
-      <el-form
-        class="login-form"
-        :model="model"
-        :rules="rules"
-        ref="form"
-        @submit.prevent="login"
-      >
-        <el-form-item prop="username">
-          <el-input
-            v-model="model.username"
-            placeholder="Username"
-            prefix-icon="fas fa-user"
-          ></el-input>
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input
-            v-model="model.password"
-            placeholder="Password"
-            type="password"
-            prefix-icon="fas fa-lock"
-          ></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            :loading="loading"
-            class="login-button"
-            type="primary"
-            native-type="submit"
-            block
-            >Login</el-button
-          >
-        </el-form-item>
-        <div>
-          <router-link class="forgot-password" to="#"
-            >Forgot password?</router-link
-          >
-        </div>
-        <div>
-          New here? <router-link to="/signup">Create an Account</router-link>
-        </div>
-      </el-form>
-    </el-card>
-  </div>
+  <el-row class="wrapper">
+    <el-col :span="6" :offset="9">
+      <el-card>
+        <el-container>
+          <el-col :span="20" :offset="2">
+            <h2>Sign In</h2>
+            <!-- TODO Figure out how to make this a component -->
+            <ul class="error-msg-list">
+              <li
+                class="error-msg-item"
+                v-for="message in errorMessages"
+                :key="message"
+              >
+                <i class="el-icon-warning" /> {{ message }}
+              </li>
+            </ul>
+            <el-form
+              :rules="loginFormValidations"
+              :model="loginFormData"
+              @submit.prevent="handleLoginFormSubmit"
+              ref="loginForm"
+            >
+              <el-form-item label="Email" prop="email">
+                <el-input placeholder="Email" v-model="loginFormData.email" />
+              </el-form-item>
+              <el-form-item label="Password" prop="password">
+                <el-input
+                  placeholder="Password"
+                  v-model="loginFormData.password"
+                  type="password"
+                />
+              </el-form-item>
+              <el-button
+                :loading="loginFormIsSubmitting"
+                native-type="submit"
+                size="medium"
+                type="primary"
+                >Submit</el-button
+              >
+              <p class="login-link-msg">
+                Don't have an account?
+                <router-link to="/register">Sign Up</router-link>
+              </p>
+            </el-form>
+          </el-col>
+        </el-container>
+      </el-card>
+    </el-col>
+  </el-row>
 </template>
 
-<script>
-export default {
-  name: "login",
-  data() {
-    return {
-      validCredentials: {
-        username: "lightscope",
-        password: "lightscope",
-      },
-      model: {
-        username: "",
-        password: "",
-      },
-      loading: false,
-      rules: {
-        username: [
-          {
-            required: true,
-            message: "Username is required",
-            trigger: "blur",
-          },
-          {
-            min: 4,
-            message: "Username length should be at least 5 characters",
-            trigger: "blur",
-          },
-        ],
-        password: [
-          { required: true, message: "Password is required", trigger: "blur" },
-          {
-            min: 5,
-            message: "Password length should be at least 5 characters",
-            trigger: "blur",
-          },
-        ],
-      },
+<script lang="ts">
+import { computed, defineComponent, reactive, Ref, ref } from "vue";
+
+import { ILogInFormData } from "../types/formData.types";
+import { useStore } from "@/store";
+import { validateEmail } from "../customFormValidations";
+import { ActionTypes } from "@/store/modules/auth";
+import router from "@/router";
+
+export default defineComponent({
+  name: "SignUp",
+  components: {},
+  setup() {
+    // Store
+    const store = useStore();
+
+    // Form
+    const loginForm: Ref<HTMLFormElement | undefined> = ref(undefined);
+
+    // Form Data
+    const loginFormData: ILogInFormData = reactive({
+      email: "",
+      password: "",
+    });
+
+    // Form Validations
+    const loginFormValidations = {
+      email: [
+        { required: true, message: "Required", trigger: "blur" },
+        {
+          min: 5,
+          message: "Length must be at least 5 characters",
+          trigger: "blur",
+        },
+        { validator: validateEmail, trigger: "blur" },
+      ],
+      password: [
+        { required: true, message: "Required", trigger: "blur" },
+        {
+          min: 5,
+          message: "Length must be at least 5 characters",
+          trigger: "blur",
+        },
+      ],
     };
-  },
-  methods: {
-    simulateLogin() {
-      return new Promise((resolve) => {
-        setTimeout(resolve, 800);
-      });
-    },
-    async login() {
-      let valid = await this.$refs.form.validate();
-      if (!valid) {
+
+    // Form Submit Handler
+    const handleLoginFormSubmit = async () => {
+      const form = loginForm.value;
+      if (!form) return;
+
+      try {
+        await form.validate();
+      } catch (e) {
+        console.error("Failed to validate!", e);
         return;
       }
-      this.loading = true;
-      await this.simulateLogin();
-      this.loading = false;
-      if (
-        this.model.username === this.validCredentials.username &&
-        this.model.password === this.validCredentials.password
-      ) {
-        this.$message.success("Login successfull");
-      } else {
-        this.$message.error("Username or password is invalid");
-      }
-    },
+
+      await store.dispatch(ActionTypes.LOGIN, loginFormData);
+      if (errorMessages.value.length) return;
+
+      router.push("/home");
+    };
+
+    // Form Computed Properties
+    const loginFormIsSubmitting = computed<boolean>(
+      () => store.getters.isLoading
+    );
+
+    const errorMessages = computed<string[]>(
+      () => store.getters.loginErrorMessages
+    );
+
+    return {
+      loginForm,
+      loginFormData,
+      loginFormValidations,
+      handleLoginFormSubmit,
+      loginFormIsSubmitting,
+      errorMessages,
+    };
   },
-};
+});
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.login {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+<style lang="scss" scoped>
+@import "~element-plus/packages/theme-chalk/src/common/var";
+
+.wrapper {
+  margin-top: 4rem;
 }
 
-.login-button {
-  width: 100%;
-  margin-top: 40px;
+.error-msg-list {
+  margin: 0;
+  padding: 0;
+  text-align: start;
+  min-height: 22px;
 }
-.login-form {
-  width: 290px;
-}
-.forgot-password {
-  margin-top: 10px;
-}
-</style>
-<style lang="scss">
-$teal: rgb(0, 124, 137);
-.el-button--primary {
-  background: $teal;
-  border-color: $teal;
 
-  &:hover,
-  &.active,
-  &:focus {
-    background: lighten($teal, 7);
-    border-color: lighten($teal, 7);
-  }
-}
-.login .el-input__inner:hover {
-  border-color: $teal;
-}
-.login .el-input__prefix {
-  background: rgb(238, 237, 234);
-  left: 0;
-  height: calc(100% - 2px);
-  left: 1px;
-  top: 1px;
-  border-radius: 3px;
-  .el-input__icon {
-    width: 30px;
-  }
-}
-.login .el-input input {
-  padding-left: 35px;
-}
-.login .el-card {
-  padding-top: 0;
-  padding-bottom: 30px;
-}
-h2 {
-  font-family: "Open Sans";
-  letter-spacing: 1px;
-  font-family: Roboto, sans-serif;
-  padding-bottom: 20px;
-}
-a {
-  color: $teal;
-  text-decoration: none;
-  &:hover,
-  &:active,
-  &:focus {
-    color: lighten($teal, 7);
-  }
-}
-.login .el-card {
-  width: 340px;
-  display: flex;
-  justify-content: center;
+.error-msg-item {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  color: $--color-danger;
 }
 </style>

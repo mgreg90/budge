@@ -17,6 +17,12 @@ object Problems {
         statusCode = 404
     )
 
+    fun BAD_REQUEST(message: String) = Problem(
+        type = ProblemType.BAD_REQUEST,
+        message = message,
+        statusCode = 400
+    )
+
     fun AUTHENTICATION_ERROR() = Problem(
         type = ProblemType.AUTHENTICATION_FAILED,
         statusCode = 401
@@ -65,8 +71,7 @@ object Problems {
         statusCode = 503
     )
 
-
-    fun DATABASE_ACTION_FAILED_ERROR(message : String) = Problem(
+    fun DATABASE_TRANSACTION_FAILED_ERROR(message : String = "Database transaction failed!") = Problem(
             type = ProblemType.INTERNAL_SERVER_ERROR,
             message = message,
             statusCode = 500
@@ -96,6 +101,11 @@ object Problems {
         NOT_FOUND(
             "not-found",
             "Resource not found"
+        ),
+
+        BAD_REQUEST(
+            "bad-request",
+            "Something Went Wrong!"
         ),
 
         AUTHENTICATION_FAILED(
@@ -128,7 +138,7 @@ object Problems {
             "Service is temporarily unavailable"
         );
 
-        val typeString = "workout-data-aggregator.errors.$_typeString"
+        val typeString = "budge.errors.$_typeString"
 
         override fun toString() = typeString
 

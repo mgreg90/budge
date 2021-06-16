@@ -6,6 +6,8 @@ import com.budge.api.persistence.Repositories
 import com.budge.api.rest.controllers.Controllers
 import com.budge.api.services.Services
 import io.javalin.Javalin
+import io.javalin.apibuilder.ApiBuilder.before
+import io.javalin.core.util.Header
 import org.slf4j.LoggerFactory
 
 class App {
@@ -23,7 +25,13 @@ class App {
         val services = Services(clients, repositories).init()
         controllers = Controllers(services).init()
 
-        app = Javalin.create()
+        app = Javalin.create {
+            it.enableCorsForAllOrigins()
+            it.enableDevLogging()
+//            before { ctx ->
+//                ctx.header(Header.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+//            }
+        }
 
         registerRoutes()
         startServer()

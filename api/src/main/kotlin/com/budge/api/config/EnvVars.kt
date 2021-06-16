@@ -14,6 +14,7 @@ object EnvVars {
     private lateinit var postgresDbName : String
     private lateinit var postgresPort : String
     private lateinit var postgresHost : String
+    private lateinit var jwtSigningKey : String
 
     fun init() {
         val envReader = EnvVarReader()
@@ -23,6 +24,7 @@ object EnvVars {
         postgresDbName = envReader.readStr("POSTGRES_DB_NAME")
         postgresPort = envReader.readStr("POSTGRES_PORT")
         postgresHost = envReader.readStr("POSTGRES_HOST")
+        jwtSigningKey = envReader.readStr("JWT_SIGNING_KEY")
 
         envReader.validate()
         isInitialized = true
@@ -34,6 +36,7 @@ object EnvVars {
     fun postgresDbName() = get(postgresDbName)
     fun postgresPort() = get(postgresPort)
     fun postgresHost() = get(postgresHost)
+    fun jwtSigningKey() = get(jwtSigningKey)
 
     private fun <T : Any?>get(variable : T) : T {
         if (!isInitialized) throw Exceptions.InitializationException(javaClass, "EnvVars are not yet initialized!")

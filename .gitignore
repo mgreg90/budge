@@ -2,3 +2,4 @@ api/.env
 api/.gradle/*
 api/build/*
 api/.idea
+web/node_modules/*

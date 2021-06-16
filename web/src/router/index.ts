@@ -1,21 +1,42 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import applyMiddleware from "./middleware";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    redirect: "/login",
+    redirect: "/home",
+  },
+  {
+    path: "/home",
+    name: "Home",
+    component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue"),
+  },
+  {
+    path: "/register",
+    name: "Sign Up",
+    component: () =>
+      import(/* webpackChunkName: "signup" */ "../views/SignUp.vue"),
+    meta: {
+      public: true,
+    },
   },
   {
     path: "/login",
-    name: "Login",
+    name: "Sign In",
     component: () =>
       import(/* webpackChunkName: "login" */ "../views/Login.vue"),
+    meta: {
+      public: true,
+    },
   },
   {
-    path: "/signup",
-    name: "SignUp",
+    path: "/:path(.*)*",
+    name: "Not Found",
     component: () =>
-      import(/* webpackChunkName: "signup" */ "../views/SignUp.vue"),
+      import(/* webpackChunkName: "notfound" */ "../views/NotFound.vue"),
+    meta: {
+      public: true,
+    },
   },
 ];
 
@@ -23,5 +44,7 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
+
+applyMiddleware(router);
 
 export default router;
