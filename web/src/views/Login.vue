@@ -59,7 +59,7 @@ import { ILogInFormData } from "../types/formData.types";
 import { useStore } from "@/store";
 import { validateEmail } from "../customFormValidations";
 import { ActionTypes } from "@/store/modules/auth";
-import router from "@/router";
+import router, { goTo, RouteEnum } from "@/router";
 
 export default defineComponent({
   name: "SignUp",
@@ -113,7 +113,7 @@ export default defineComponent({
       await store.dispatch(ActionTypes.LOGIN, loginFormData);
       if (errorMessages.value.length) return;
 
-      router.push("/transactions");
+      goTo(RouteEnum.Transactions)
     };
 
     // Form Computed Properties

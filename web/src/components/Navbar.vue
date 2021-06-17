@@ -21,7 +21,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue'
 import { v4 as uuid } from 'uuid';
-import router from '@/router';
+import router, { goTo, RouteEnum } from '@/router';
 import { useRoute } from 'vue-router';
 import { RootStore, useStore } from '@/store';
 import { MutationTypes } from '@/store/modules/auth/mutations';
@@ -34,7 +34,7 @@ interface Props {
 interface MenuItem {
   key: string
   text: string
-  route?: string
+  route?: RouteEnum
   class?: string
   handleClick?: () => void
 }
@@ -79,6 +79,9 @@ const buildMenuItems = (isLoggedIn: boolean, store: RootStore): MenuItem[] => {
       key: uuid(),
       text: "Budge",
       class: "logo",
+      handleClick: () => {
+        goTo(RouteEnum.Transactions)
+      }
     },
   ]
   if (isLoggedIn) {
@@ -87,19 +90,18 @@ const buildMenuItems = (isLoggedIn: boolean, store: RootStore): MenuItem[] => {
       {
         key: uuid(),
         text: "Transactions",
-        route: "/transactions",
+        route: RouteEnum.Transactions,
       },
       {
         key: uuid(),
         text: "Data",
-        route: "/data",
+        route: RouteEnum.Data,
       },
       {
         key: uuid(),
         text: "Log Out",
         handleClick: () => {
           store.dispatch(ActionTypes.SET_SESSION, null)
-          console.log("Logging out!");
         },
       }
     ];
@@ -109,12 +111,12 @@ const buildMenuItems = (isLoggedIn: boolean, store: RootStore): MenuItem[] => {
       {
         key: uuid(),
         text: "Sign In",
-        route: "/login",
+        route: RouteEnum.Login,
       },
       {
         key: uuid(),
         text: "Register",
-        route: "/register",
+        route: RouteEnum.Register,
       },
     ];
   }

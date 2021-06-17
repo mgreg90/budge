@@ -10,7 +10,7 @@ import {
 import { Either } from "@/models/Either";
 import { ApiErrorResponse } from "@/models/ApiErrorResponse";
 import Session from "@/models/Session";
-import router from "@/router";
+import router, { goTo, RouteEnum } from "@/router";
 import { Payload } from "@/types/store.types";
 
 export enum ActionTypes {
@@ -67,7 +67,7 @@ export const actions: ActionTree<AuthState, RootState> & Actions = {
     if (!session) {
       console.log("No token found in localStorage");
       commit(MutationTypes.SET_SESSION, { value: null });
-      router.push("/login")
+      goTo(RouteEnum.Login);
       return false;
     }
     console.log("Token found in localStorage");
@@ -80,7 +80,7 @@ export const actions: ActionTree<AuthState, RootState> & Actions = {
     }
     console.log("Failed to create session in store");
     commit(MutationTypes.SET_SESSION, { value: null });
-    router.push("/login");
+    goTo(RouteEnum.Login);
   },
 };
 
