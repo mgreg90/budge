@@ -56,9 +56,11 @@
                 type="primary"
                 >Submit</el-button
               >
-              <p class="signup-link-msg">
+              <p class="login-link-msg">
                 Already have an account?
-                <router-link to="/login">Sign In</router-link>
+                <router-link to="/login">
+                  <el-link type="primary">Sign In</el-link>
+                </router-link>
               </p>
             </el-form>
           </el-col>
@@ -150,7 +152,7 @@ export default defineComponent({
         return;
       }
 
-      store.dispatch(ActionTypes.SIGNUP, signUpFormData);
+      await store.dispatch(ActionTypes.SIGNUP, signUpFormData);
       if (errorMessages.value.length) return;
 
       router.push("/home");
@@ -190,6 +192,7 @@ export default defineComponent({
   padding: 0;
   text-align: start;
   min-height: 22px;
+  font-size: 14px;
 }
 
 .error-msg-item {
@@ -197,5 +200,14 @@ export default defineComponent({
   padding: 0;
   margin: 0;
   color: $--color-danger;
+}
+
+.login-link-msg {
+  font-size: 14px;
+
+  a {
+    text-decoration: none;
+    font-size: inherit;
+  }
 }
 </style>

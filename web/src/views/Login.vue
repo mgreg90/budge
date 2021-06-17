@@ -38,9 +38,11 @@
                 type="primary"
                 >Submit</el-button
               >
-              <p class="login-link-msg">
+              <p class="signup-link-msg">
                 Don't have an account?
-                <router-link to="/register">Sign Up</router-link>
+                <router-link to="/register">
+                  <el-link type="primary">Sign Up</el-link>
+                </router-link>
               </p>
             </el-form>
           </el-col>
@@ -147,6 +149,7 @@ export default defineComponent({
   padding: 0;
   text-align: start;
   min-height: 22px;
+  font-size: 14px;
 }
 
 .error-msg-item {
@@ -154,5 +157,14 @@ export default defineComponent({
   padding: 0;
   margin: 0;
   color: $--color-danger;
+}
+
+.signup-link-msg {
+  font-size: 14px;
+
+  a {
+    text-decoration: none;
+    font-size: inherit;
+  }
 }
 </style>
