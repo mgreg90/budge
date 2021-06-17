@@ -29,7 +29,7 @@ export default {
     const session = computed<Session | undefined>(() => store.getters.session);
 
     return {
-      session, // should this be an action? Simplify just to currentUser?
+      session,
     };
   },
 };

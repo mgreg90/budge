@@ -1,7 +1,4 @@
 import Session from "@/models/Session";
-import { useStore } from "@/store";
-import { exposedGetters } from "@/store/modules/auth";
-import { LOCAL_STORAGE_SESSION_KEY } from "@/types/domain.types";
 import { Router } from "vue-router";
 
 const applyAuthMiddleware = (router: Router): void => {

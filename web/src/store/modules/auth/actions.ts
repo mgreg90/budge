@@ -10,7 +10,6 @@ import {
 import { Either } from "@/models/Either";
 import { ApiErrorResponse } from "@/models/ApiErrorResponse";
 import Session from "@/models/Session";
-import { JwtTokenBody, LOCAL_STORAGE_SESSION_KEY } from "@/types/domain.types";
 import router from "@/router";
 
 export enum ActionTypes {
