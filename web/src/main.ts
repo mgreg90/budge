@@ -6,5 +6,6 @@ import ElementPlus from "element-plus";
 
 import "element-plus/lib/theme-chalk/index.css";
 import "./element-variables.scss";
+import "@/assets/global.css"
 
 createApp(App).use(store, key).use(router).use(ElementPlus).mount("#app");

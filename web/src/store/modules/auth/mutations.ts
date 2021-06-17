@@ -15,7 +15,7 @@ export enum MutationTypes {
 export type Mutations<S = AuthState> = {
   [MutationTypes.SET_SESSION](
     state: S,
-    payload: Payload<Session | undefined>
+    payload: Payload<Session | null>
   ): void;
   [MutationTypes.SET_IS_LOADING](state: S, payload: Payload<boolean>): void;
   [MutationTypes.SET_LOGIN_ERROR_MESSAGES](
@@ -30,7 +30,7 @@ export type Mutations<S = AuthState> = {
 
 export const mutations: MutationTree<AuthState> & Mutations = {
   [MutationTypes.SET_SESSION](state, payload) {
-    state.session = payload.value;
+    state.session = payload.value ?? null;
     if (payload.value?.token)
       localStorage.setItem(localStorageSessionKey, payload.value.token);
     else localStorage.removeItem(localStorageSessionKey);

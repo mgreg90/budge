@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header>
-      <p>Budge - Logged In ✅</p>
+      <navbar :isLoggedIn="true"></navbar>
     </el-header>
     <el-main>
       <slot></slot>
@@ -10,9 +10,12 @@
 </template>
 
 <script lang="ts">
+import Navbar from "@/components/Navbar.vue";
 import { defineComponent } from "vue";
 
-export default defineComponent({});
+export default defineComponent({
+  components: { Navbar },
+});
 </script>
 
 <style lang="scss" scoped></style>

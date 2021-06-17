@@ -11,6 +11,7 @@ import { Either } from "@/models/Either";
 import { ApiErrorResponse } from "@/models/ApiErrorResponse";
 import Session from "@/models/Session";
 import router from "@/router";
+import { Payload } from "@/types/store.types";
 
 export enum ActionTypes {
   SIGNUP = "AUTH__SIGNUP",
@@ -27,7 +28,10 @@ export interface Actions {
     { commit }: AugmentedActionContext,
     payload: ISessionCreateRequestDto
   ): void;
-  [ActionTypes.SET_SESSION]({ commit }: AugmentedActionContext): void;
+  [ActionTypes.SET_SESSION](
+    { commit }: AugmentedActionContext,
+    payload: Session | null
+    ): void;
 }
 
 export type AugmentedActionContext = {
@@ -59,35 +63,31 @@ export const actions: ActionTree<AuthState, RootState> & Actions = {
     handleAuthResponse(either, commit, MutationTypes.SET_LOGIN_ERROR_MESSAGES);
   },
 
-  async [ActionTypes.SET_SESSION]({ commit }) {
-    let session: Session | null = null;
-    try {
-      session = Session.fromToken();
-      if (!session) {
-        console.log("No token found in localStorage");
-        return false;
-      }
-      console.log("Token found in localStorage");
-      const isValid = await sessionApiService.validate();
-      if (isValid) {
-        console.log("Creating session from token");
-        commit(MutationTypes.SET_SESSION, { value: session });
-        console.log("Session created in store");
-        return true;
-      }
-      console.log("Failed to create session in store");
-      router.push("/login");
-    } catch (e) {
-      console.error("Failed set session!", e, session);
+  async [ActionTypes.SET_SESSION]({ commit }, session: Session | null) {
+    if (!session) {
+      console.log("No token found in localStorage");
+      commit(MutationTypes.SET_SESSION, { value: null });
+      router.push("/login")
       return false;
     }
+    console.log("Token found in localStorage");
+    const isValid = await sessionApiService.validate();
+    if (isValid) {
+      console.log("Creating session from token");
+      commit(MutationTypes.SET_SESSION, { value: session });
+      console.log("Session created in store");
+      return true;
+    }
+    console.log("Failed to create session in store");
+    commit(MutationTypes.SET_SESSION, { value: null });
+    router.push("/login");
   },
 };
 
 // Helpers
 const setAuthFetchingState = (commit: Commit) => {
   commit(MutationTypes.SET_IS_LOADING, { value: true });
-  commit(MutationTypes.SET_SESSION, { value: undefined });
+  commit(MutationTypes.SET_SESSION, { value: null });
 };
 
 const handleAuthResponse = (

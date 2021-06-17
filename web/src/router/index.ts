@@ -4,12 +4,12 @@ import applyMiddleware from "./middleware";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    redirect: "/home",
+    redirect: "/transactions",
   },
   {
-    path: "/home",
-    name: "Home",
-    component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue"),
+    path: "/transactions",
+    name: "Transactions",
+    component: () => import(/* webpackChunkName: "transactions" */ "../views/Transactions.vue"),
   },
   {
     path: "/register",

@@ -113,7 +113,7 @@ export default defineComponent({
       await store.dispatch(ActionTypes.LOGIN, loginFormData);
       if (errorMessages.value.length) return;
 
-      router.push("/home");
+      router.push("/transactions");
     };
 
     // Form Computed Properties

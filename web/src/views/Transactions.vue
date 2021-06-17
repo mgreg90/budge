@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="transactions">
     {{ privateData }}
   </div>
 </template>
@@ -10,7 +10,7 @@ import { ActionTypes } from "@/store/modules/transactions";
 import { computed, defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Home",
+  name: "Transactions",
   components: {},
   setup() {
     const store = useStore();

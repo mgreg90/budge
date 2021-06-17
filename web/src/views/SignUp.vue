@@ -155,7 +155,7 @@ export default defineComponent({
       await store.dispatch(ActionTypes.SIGNUP, signUpFormData);
       if (errorMessages.value.length) return;
 
-      router.push("/home");
+      router.push("/transactions");
     };
 
     // Form Computed Properties
