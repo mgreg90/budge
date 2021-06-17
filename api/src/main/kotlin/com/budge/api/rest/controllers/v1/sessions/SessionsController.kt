@@ -46,12 +46,12 @@ class SessionsController(
     private fun read(ctx: Context) {
         controllerAction(ctx) {
             val authToken = ctx.authToken()
-            if (ctx.authToken().isNullOrBlank()) {
+            if (authToken.isNullOrBlank()) {
                 ctx.json(SessionReadResponseDto(false))
                 return@controllerAction
             }
 
-            val isTokenValid = authToken?.let { authService.validateToken(it) } ?: false
+            val isTokenValid = authToken?.let { authService.validateToken(it) }
 
             ctx.json(SessionReadResponseDto(isTokenValid))
         }

@@ -1,6 +1,7 @@
 package com.budge.api.services
 
 import com.budge.api.EnvVars
+import com.budge.api.domain.auth.JwtToken
 import com.budge.api.domain.auth.Session
 import com.budge.api.persistence.repositories.UserRepository
 import com.budge.api.rest.controllers.v1.sessions.requestDtos.SessionCreateRequestDto
@@ -26,52 +27,23 @@ class AuthService(private val userRepo: UserRepository) {
             return Either.Problem(Problems.AUTHENTICATION_ERROR())
         }
 
-        val now = Date()
-        val expirationTime = Calendar.getInstance().let { cal -> {
-            cal.time = now
-            cal.add(Calendar.DATE, DEFAULT_TOKEN_EXPIRATION_DAYS);
-            cal.time
-        } }
+        val jwt = JwtToken.create(user)
 
-        // Create user token
-        val jwt = Jwts.builder()
-            .setId(UUID.randomUUID().toString())
-            .setIssuer(TOKEN_ISSUER)
-            .setSubject(user.id.toString())
-            .setAudience(user.id.toString())
-            .setNotBefore(now)
-            .setIssuedAt(now)
-            .setExpiration(expirationTime())
-            .claim(USER_ID_CLAIM_KEY, user.id)
-            .claim(EMAIL_CLAIM_KEY, user.email)
-
-        val signedJwt = jwt.signWith(signingKey()).compact()
-        return Either.Value(Session(user, signedJwt))
+        return Either.Value(Session(user, jwt))
     }
 
     fun validateToken(token: String, userId: UUID? = null): Boolean {
         return try {
-            val tokenBody: Claims = Jwts.parserBuilder()
-                .setSigningKey(signingKey())
-                .build()
-                .parse(token).body as Claims
+            val jwtToken = JwtToken(token)
 
-            var condition = tokenBody.issuer == TOKEN_ISSUER &&
-                    tokenBody.expiration > Date.from(Instant.now())
-            if (userId != null) condition = condition && tokenBody[USER_ID_CLAIM_KEY] == userId.toString()
+            var condition = jwtToken.issuer() == JwtToken.TOKEN_ISSUER &&
+                    jwtToken.expiration() > Date.from(Instant.now())
+
+            if (userId != null) condition = condition && jwtToken.userId() == userId
 
             condition
         } catch (ex: SignatureException) {
             false
         }
-    }
-
-    private fun signingKey() = Keys.hmacShaKeyFor(EnvVars.jwtSigningKey().toByteArray())
-
-    companion object {
-        private const val DEFAULT_TOKEN_EXPIRATION_DAYS = 7
-        private const val TOKEN_ISSUER = "com.budge"
-        private const val USER_ID_CLAIM_KEY = "userId"
-        private const val EMAIL_CLAIM_KEY = "email"
     }
 }

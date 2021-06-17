@@ -15,7 +15,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
 
-    store.dispatch(ActionTypes.GET)
+    store.dispatch(ActionTypes.GET);
 
     const privateData = computed<string>(() => store.getters.message);
 
