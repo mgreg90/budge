@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory
 class App {
     private val logger = LoggerFactory.getLogger(javaClass)
     lateinit var app: Javalin
+    lateinit var services: Services
     lateinit var controllers: Controllers
+    lateinit var accessManager: AccessManager
 
     fun start() {
         readEnvVars()
@@ -22,18 +24,17 @@ class App {
 
         val clients = Clients.init()
         val repositories = Repositories.init().registerIndexes()
-        val services = Services(clients, repositories).init()
+        services = Services(clients, repositories).init()
         controllers = Controllers(services).init()
+        accessManager = AccessManager(services.authService)
 
         app = Javalin.create {
             it.enableCorsForAllOrigins()
             it.enableDevLogging()
-//            before { ctx ->
-//                ctx.header(Header.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
-//            }
         }
 
         registerRoutes()
+        registerAccessManager()
         startServer()
     }
 
@@ -59,6 +60,13 @@ class App {
         logger.info("Registering Routes... ")
         controllers.registerRoutes(app)
         logger.info("Registering Routes Complete!")
+    }
+
+
+    private fun registerAccessManager() {
+        logger.info("Registering Access Manager... ")
+        accessManager.register(app)
+        logger.info("Registering Access Manager Complete!")
     }
 
     private fun startServer() {

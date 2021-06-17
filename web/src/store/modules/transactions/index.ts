@@ -7,35 +7,31 @@ import {
   CommitOptions,
   DispatchOptions,
 } from "vuex";
-import { RootState } from "@/store";
-import Session from "@/models/Session";
 
-interface AuthState {
-  session?: Session;
-  isLoading: boolean;
-  loginErrorMessages: string[];
-  signupErrorMessages: string[];
+import { RootState } from "@/store";
+
+interface TransactionsState {
+  message: string;
 }
 
-const state: AuthState = {
-  session: undefined,
-  isLoading: false,
-  loginErrorMessages: [],
-  signupErrorMessages: [],
+const defaultMsg = "Private data not loaded";
+
+const state: TransactionsState = {
+  message: defaultMsg,
 };
 
-const authModule: Module<AuthState, RootState> = {
+const transactionsModule: Module<TransactionsState, RootState> = {
   state,
   mutations,
   actions,
   getters,
 };
 
-export { AuthState, ActionTypes, Store };
-export default authModule;
+export { TransactionsState, ActionTypes, Store, defaultMsg };
+export default transactionsModule;
 
-type Store<AuthState> = Omit<
-  VuexStore<AuthState>,
+type Store<TransactionsState> = Omit<
+  VuexStore<TransactionsState>,
   "commit" | "getters" | "dispatch"
 > & {
   commit<K extends keyof Mutations, P extends Parameters<Mutations[K]>[1]>(

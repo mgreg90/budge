@@ -28,3 +28,7 @@ export interface ISessionCreateResponseDto {
 export interface ISessionReadResponseDto {
   isTokenValid: boolean;
 }
+
+export interface ITransactionsReadResponseDto {
+  message: string;
+}
