@@ -1,18 +1,25 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import applyMiddleware from "./middleware";
 
+enum RouteEnum {
+  Data = "/data",
+  Login = "/login",
+  Register = "/register",
+  Transactions = "/transactions",
+}
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    redirect: "/home",
+    redirect: RouteEnum.Transactions,
   },
   {
-    path: "/home",
-    name: "Home",
-    component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue"),
+    path: RouteEnum.Transactions,
+    name: "Transactions",
+    component: () => import(/* webpackChunkName: "transactions" */ "../views/Transactions.vue"),
   },
   {
-    path: "/register",
+    path: RouteEnum.Register,
     name: "Sign Up",
     component: () =>
       import(/* webpackChunkName: "signup" */ "../views/SignUp.vue"),
@@ -21,7 +28,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/login",
+    path: RouteEnum.Login,
     name: "Sign In",
     component: () =>
       import(/* webpackChunkName: "login" */ "../views/Login.vue"),
@@ -46,5 +53,9 @@ const router = createRouter({
 });
 
 applyMiddleware(router);
+
+const goTo = (route: RouteEnum) => router.push(route)
+
+export { RouteEnum, goTo }
 
 export default router;

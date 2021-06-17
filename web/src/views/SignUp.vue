@@ -80,7 +80,7 @@ import {
 } from "../customFormValidations";
 import { useStore } from "@/store";
 import { ActionTypes } from "@/store/modules/auth";
-import router from "@/router";
+import router, { goTo, RouteEnum } from "@/router";
 
 export default defineComponent({
   name: "SignUp",
@@ -155,7 +155,7 @@ export default defineComponent({
       await store.dispatch(ActionTypes.SIGNUP, signUpFormData);
       if (errorMessages.value.length) return;
 
-      router.push("/home");
+      goTo(RouteEnum.Transactions);
     };
 
     // Form Computed Properties

@@ -11,14 +11,14 @@ import { RootState } from "@/store";
 import Session from "@/models/Session";
 
 interface AuthState {
-  session?: Session;
+  session: Session | null;
   isLoading: boolean;
   loginErrorMessages: string[];
   signupErrorMessages: string[];
 }
 
 const state: AuthState = {
-  session: undefined,
+  session: null,
   isLoading: false,
   loginErrorMessages: [],
   signupErrorMessages: [],

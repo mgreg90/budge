@@ -7,7 +7,7 @@ export type Getters<S = AuthState> = {
   isLoading: (state: S) => boolean;
   loginErrorMessages: (state: S) => string[];
   signupErrorMessages: (state: S) => string[];
-  session: (state: S) => Session | undefined;
+  session: (state: S) => Session | null;
 };
 
 export const getters: GetterTree<AuthState, RootState> & Getters<AuthState> = {
@@ -15,5 +15,5 @@ export const getters: GetterTree<AuthState, RootState> & Getters<AuthState> = {
   loginErrorMessages: (state: AuthState): string[] => state.loginErrorMessages,
   signupErrorMessages: (state: AuthState): string[] =>
     state.signupErrorMessages,
-  session: (state: AuthState): Session | undefined => state.session,
+  session: (state: AuthState): Session | null => state.session,
 };

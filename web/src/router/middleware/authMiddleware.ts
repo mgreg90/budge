@@ -1,5 +1,6 @@
 import Session from "@/models/Session";
 import { Router } from "vue-router";
+import { RouteEnum } from "..";
 
 const applyAuthMiddleware = (router: Router): void => {
   router.beforeEach((to, from, next) => {
@@ -12,7 +13,7 @@ const applyAuthMiddleware = (router: Router): void => {
     const routeRequiresAuth = to.matched.some((record) => !record.meta.public);
 
     if (routeRequiresAuth && !isLoggedIn) {
-      next("/login");
+      next(RouteEnum.Login);
       return;
     }
 

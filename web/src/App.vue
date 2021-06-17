@@ -26,7 +26,7 @@ export default {
 
     store.dispatch(ActionTypes.SET_SESSION);
 
-    const session = computed<Session | undefined>(() => store.getters.session);
+    const session = computed<Session | null>(() => store.getters.session);
 
     return {
       session,
@@ -40,8 +40,6 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
