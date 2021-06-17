@@ -18,18 +18,6 @@ export enum ActionTypes {
   SET_SESSION = "SET_SESSION",
 }
 
-type AugmentedActionContext = {
-  commit<K extends keyof Mutations>(
-    key: K,
-    payload: Parameters<Mutations[K]>[1]
-  ): ReturnType<Mutations[K]>;
-} & Omit<ActionContext<AuthState, RootState>, "commit">;
-
-type Commit = <K extends keyof Mutations<AuthState>>(
-  key: K,
-  payload: Parameters<Mutations<AuthState>[K]>[1]
-) => ReturnType<Mutations<AuthState>[K]>;
-
 export interface Actions {
   [ActionTypes.SIGNUP](
     { commit }: AugmentedActionContext,
@@ -41,6 +29,18 @@ export interface Actions {
   ): void;
   [ActionTypes.SET_SESSION]({ commit }: AugmentedActionContext): void;
 }
+
+export type AugmentedActionContext = {
+  commit<K extends keyof Mutations>(
+    key: K,
+    payload: Parameters<Mutations[K]>[1]
+  ): ReturnType<Mutations[K]>;
+} & Omit<ActionContext<AuthState, RootState>, "commit">;
+
+type Commit = <K extends keyof Mutations<AuthState>>(
+  key: K,
+  payload: Parameters<Mutations<AuthState>[K]>[1]
+) => ReturnType<Mutations<AuthState>[K]>;
 
 export const actions: ActionTree<AuthState, RootState> & Actions = {
   async [ActionTypes.SIGNUP]({ commit }, model: IUserCreateRequestDto) {
@@ -96,7 +96,6 @@ const handleAuthResponse = (
   errMsgMutation: MutationTypes
 ) => {
   if (either.isSuccess()) {
-    const session = either.value!;
     console.log("success", either.value);
     commit(MutationTypes.SET_SESSION, { value: either.value! });
     commit(errMsgMutation, { value: [] });

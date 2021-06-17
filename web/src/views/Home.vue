@@ -1,20 +1,26 @@
 <template>
   <div class="home">
-    {{ message }}
+    {{ privateData }}
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { useStore } from "@/store";
+import { ActionTypes } from "@/store/modules/transactions";
+import { computed, defineComponent } from "vue";
 
 export default defineComponent({
   name: "Home",
   components: {},
   setup() {
-    const message = "Home Page - Protected";
+    const store = useStore();
+
+    store.dispatch(ActionTypes.GET);
+
+    const privateData = computed<string>(() => store.getters.message);
 
     return {
-      message,
+      privateData,
     };
   },
 });
