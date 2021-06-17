@@ -8,6 +8,9 @@ export default class Session {
   token: string;
   private _parsedToken?: JwtTokenBody;
   private _expiresAt?: number = undefined;
+  private _issuer?: string = undefined;
+
+  static ISSUER = "com.budge";
 
   constructor(
     userId: string,
@@ -25,10 +28,9 @@ export default class Session {
     return new Session(dto.user.id, dto.user.email, dto.token);
   }
 
-  static fromToken(token?: string | null): Session {
+  static fromToken(token?: string | null): Session | null {
     if (!token) token = Session.readToken();
-    if (!token)
-      throw new Error("Session#fromToken - No token passed or in localStorage");
+    if (!token) return null;
 
     const parsedToken = jwtDecode(token) as JwtTokenBody;
     return new Session(
@@ -55,5 +57,16 @@ export default class Session {
   expiresAt(): number {
     if (!this._expiresAt) this._expiresAt = this.parsedToken().exp!;
     return this._expiresAt;
+  }
+
+  issuer(): string {
+    if (!this._issuer) this._issuer = this.parsedToken().iss!;
+    return this._issuer;
+  }
+
+  isValid(): boolean {
+    const now = Date.now() / 1000;
+
+    return this.issuer() == Session.ISSUER && this.expiresAt() > now;
   }
 }

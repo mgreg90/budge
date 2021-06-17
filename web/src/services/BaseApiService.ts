@@ -95,7 +95,13 @@ class BaseApiService {
   private authHeaders(skipAuth: boolean): Record<string, string> {
     if (skipAuth) return {};
 
-    return { Authorization: `Bearer ${Session.fromToken().token}` };
+    const token = Session.fromToken()?.token;
+    if (!token) {
+      console.warn("Token Missing for request");
+      return {};
+    }
+
+    return { Authorization: `Bearer ${token}` };
   }
 
   private url(): string {

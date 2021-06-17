@@ -31,7 +31,21 @@ const authModule: Module<AuthState, RootState> = {
   getters,
 };
 
-export { AuthState, ActionTypes, Store };
+interface ExposedGetters {
+  session: () => Session | undefined;
+  state: () => AuthState;
+}
+
+const exposedGetters: ExposedGetters = {
+  session() {
+    return getters.session(state);
+  },
+  state() {
+    return state;
+  },
+};
+
+export { AuthState, ActionTypes, Store, exposedGetters };
 export default authModule;
 
 type Store<AuthState> = Omit<

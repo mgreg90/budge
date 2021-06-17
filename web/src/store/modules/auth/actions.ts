@@ -10,8 +10,7 @@ import {
 import { Either } from "@/models/Either";
 import { ApiErrorResponse } from "@/models/ApiErrorResponse";
 import Session from "@/models/Session";
-import { JwtTokenBody, LOCAL_STORAGE_SESSION_KEY } from "@/types/domain.types";
-import jwtDecode from "jwt-decode";
+import router from "@/router";
 
 export enum ActionTypes {
   SIGNUP = "AUTH__SIGNUP",
@@ -61,22 +60,25 @@ export const actions: ActionTree<AuthState, RootState> & Actions = {
   },
 
   async [ActionTypes.SET_SESSION]({ commit }) {
-    let jwt: string | null = null;
+    let session: Session | null = null;
     try {
-      jwt = localStorage.getItem(LOCAL_STORAGE_SESSION_KEY);
-
-      if (!jwt) {
+      session = Session.fromToken();
+      if (!session) {
         console.log("No token found in localStorage");
         return false;
       }
-
+      console.log("Token found in localStorage");
       const isValid = await sessionApiService.validate();
       if (isValid) {
-        commit(MutationTypes.SET_SESSION, { value: Session.fromToken() });
+        console.log("Creating session from token");
+        commit(MutationTypes.SET_SESSION, { value: session });
+        console.log("Session created in store");
         return true;
       }
+      console.log("Failed to create session in store");
+      router.push("/login");
     } catch (e) {
-      console.error("Failed to parse stored JWT token!", e, jwt);
+      console.error("Failed set session!", e, session);
       return false;
     }
   },
